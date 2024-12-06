@@ -1,11 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.UIElements;
 using UnityEngine;
+using UnityEngine.WSA;
 
 public class PlayerController : MonoBehaviour
 {
     public float speed = 3.0f;
+
+    public GameObject projectilePrefab;
     public int maxHealth = 5;
     public float timeInvincible = 2;
     public int health { get { return currentHealth; } }
@@ -20,8 +24,10 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D rigidbody2d;
     float horizontal;
     float vertical;
+    private Vector2 lookDirection;
+
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         rigidbody2d = GetComponent<Rigidbody2D>();
         currentHealth = maxHealth;
@@ -45,9 +51,19 @@ public class PlayerController : MonoBehaviour
             {
                 isInvincible = false;
             }
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                Launch();
+            } 
+            
         }
 
 
+    }
+
+    private void Launch()
+    {
+        throw new NotImplementedException();
     }
 
     void FixedUpdate()
@@ -77,6 +93,15 @@ public class PlayerController : MonoBehaviour
             invincibleTimer = timeInvincible;
             currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
             Debug.Log(currentHealth + "/" + maxHealth);
+
+            void Launch()
+            {
+
+                GameObject projectileObject = Instantiate(projectilePrefab, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
+                Projectile projectile = projectileObject.GetComponent<Projectile>();
+                projectile.Launch(lookDirection, 300);
+                
+            }
         }
     }
 }
